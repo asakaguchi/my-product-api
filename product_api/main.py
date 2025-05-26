@@ -36,4 +36,27 @@ async def create_product(product_data: ProductCreate) -> Product:
         作成された商品データ（IDと作成日時が自動設定済み）
     """
     created_product = storage.create_product(product_data)
-    return created_product 
+    return created_product
+
+
+@app.get("/items/{product_id}", response_model=Product)
+async def get_product(product_id: int) -> Product:
+    """
+    指定されたIDの商品を取得
+    
+    Args:
+        product_id: 商品ID
+        
+    Returns:
+        商品データ
+        
+    Raises:
+        HTTPException: 商品が見つからない場合（404）
+    """
+    product = storage.get_product(product_id)
+    if product is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"商品ID {product_id} が見つかりません"
+        )
+    return product 
